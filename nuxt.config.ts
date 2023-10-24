@@ -28,9 +28,6 @@ export default betterDefineNuxtConfig(
             shim: false,
             typeCheck: true,
         },
-        nitro: {
-            static: true,
-        },
 
         // i18n: {
         //     locales: [
