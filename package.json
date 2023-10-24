@@ -31,7 +31,6 @@
         "@nuxt/devtools": "1.0.0",
         "@types/lodash": "^4.14.199",
         "eslint": "^8.51.0",
-        "eslint-plugin-consistent-default-export-name": "^0.0.15",
         "eslint-plugin-lodash": "^7.4.0",
         "eslint-plugin-promise": "^6.1.1",
         "eslint-plugin-sonarjs": "^0.21.0",
