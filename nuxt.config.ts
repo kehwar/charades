@@ -14,10 +14,11 @@ export default betterDefineNuxtConfig(
             "@nuxtjs/tailwindcss",
             "@vueuse/nuxt",
             "nuxt-typed-router",
-            "@nuxtjs/i18n",
             "@vue-macros/nuxt",
             "@pinia/nuxt",
             "nuxt-lodash",
+
+            // "@nuxtjs/i18n",
         ],
         tailwindcss: {
             viewer: false,
@@ -27,16 +28,17 @@ export default betterDefineNuxtConfig(
             shim: false,
             typeCheck: true,
         },
-        i18n: {
-            locales: [
-                { code: "en", iso: "en-US", name: "English", icon: "i-twemoji-flag-united-states" },
-                { code: "es", iso: "es-ES", name: "Español", icon: "i-twemoji-flag-peru" },
-            ],
-            defaultLocale: "en",
-        },
         nitro: {
             static: true,
         },
+
+        // i18n: {
+        //     locales: [
+        //         { code: "en", iso: "en-US", name: "English", icon: "i-twemoji-flag-united-states" },
+        //         { code: "es", iso: "es-ES", name: "Español", icon: "i-twemoji-flag-peru" },
+        //     ],
+        //     defaultLocale: "en",
+        // },
     },
 );
 
