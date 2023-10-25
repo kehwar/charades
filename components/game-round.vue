@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// Types
-
 export type GameState = "idle" | "playing";
 export type CardGuess = {
     card: string
@@ -26,13 +24,13 @@ const { vibrate } = useVibrate();
 const cardHistory = ref<CardGuess[]>([]);
 const cardIndex = useCounter(0);
 const countdown = useCounter(props.time, { min: 0 });
+const el = ref<HTMLElement | null>(null);
+const fullscreen = useFullscreen(el);
 const interval = useIntervalFn(() => countdown.dec(), 1000, { immediate: false, immediateCallback: false });
 const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
 const tilt = useTilt();
 const wakeLock = useWakeLock();
-const el = ref<HTMLElement | null>(null);
-const fullscreen = useFullscreen(el);
 
 // Watchers
 

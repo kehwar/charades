@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import _ from "lodash";
 import { joinURL } from "ufo";
 import type { CardGuess, GameState } from "~/components/game-round.vue";
 
