@@ -31,6 +31,8 @@ const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
 const tilt = useTilt();
 const wakeLock = useWakeLock();
+const el = ref<HTMLElement | null>(null);
+const fullscreen = useFullscreen(el);
 
 // Watchers
 
@@ -81,8 +83,10 @@ function startRound() {
     state.value = "playing";
 
     // Lock screen
-    orientation.lockOrientation("landscape-primary");
+    fullscreen.enter();
+    orientation.lockOrientation("landscape");
     wakeLock.request("screen");
+    vibrate([100]);
 
     // Start interval
     interval.resume();
@@ -102,6 +106,7 @@ function endRound() {
 
     // Release screen
     orientation.unlockOrientation();
+    fullscreen.exit();
     wakeLock.release();
 }
 function shuffleCards() {
@@ -132,18 +137,20 @@ onMounted(() => {
     >
         Start
     </UButton>
-    <UModal class="grid h-full w-full gap-2 text-3xl" fullscreen :model-value="state === 'playing'" :transition="false">
-        <span>{{ tilt }}</span>
-        <span>{{ countdown.count }}</span>
-        <span> {{ randomCards[cardIndex.count.value] }}</span>
-        <UButton class="h-[20vh]" color="green" @click="commitGuess(true)">
-            Correct
-        </UButton>
-        <UButton class="h-[20vh]" color="red" @click="commitGuess(false)">
-            Wrong
-        </UButton>
-        <UButton color="gray" @click="endRound">
-            End
-        </UButton>
+    <UModal fullscreen :model-value="state === 'playing'" :transition="false">
+        <div ref="el" class="grid gap-2 text-3xl">
+            <span>{{ tilt }}</span>
+            <span>{{ countdown.count }}</span>
+            <span> {{ randomCards[cardIndex.count.value] }}</span>
+            <UButton class="h-[20vh]" color="green" @click="commitGuess(true)">
+                Correct
+            </UButton>
+            <UButton class="h-[20vh]" color="red" @click="commitGuess(false)">
+                Wrong
+            </UButton>
+            <UButton color="gray" @click="endRound">
+                End
+            </UButton>
+        </div>
     </UModal>
 </template>
