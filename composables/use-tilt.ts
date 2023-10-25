@@ -1,14 +1,10 @@
-const { gamma } = useDeviceOrientation();
-
-export function useTilt(){
+export function useTilt(thresshold: number = 60) {
+    const { beta, gamma } = useDeviceOrientation();
     return computed(() => {
-        const thresshold = 60;
-        if (gamma.value == null)
+        if (beta.value == null || gamma.value == null)
             return null;
-        if (gamma.value > 0 && gamma.value < thresshold)
-            return "upwards";
-        else if (gamma.value > -thresshold && gamma.value < 0)
-            return "downwards";
+        if (Math.abs(gamma.value) < thresshold)
+            return Math.abs(beta.value) < 90 ? "upwards" : "downwards";
         else
             return "straight";
     });
