@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 // Types
 
 export type GameState = "idle" | "playing";
@@ -23,14 +22,15 @@ const state = useVModel(props, "state", emit);
 
 // Refs
 
+const { vibrate } = useVibrate();
 const cardHistory = ref<CardGuess[]>([]);
 const cardIndex = useCounter(0);
 const countdown = useCounter(props.time, { min: 0 });
 const interval = useIntervalFn(() => countdown.dec(), 1000, { immediate: false, immediateCallback: false });
+const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
 const tilt = useTilt();
-const orientation = useScreenOrientation();
-const { vibrate } = useVibrate({ pattern: [300, 100, 300] });
+const wakeLock = useWakeLock();
 
 // Watchers
 
@@ -62,7 +62,7 @@ function commitGuess(guess: boolean | null) {
 
     // Feedback
     if (guess != null)
-        vibrate();
+        vibrate(guess ? [100] : [100, 50, 100]);
 
     // Increment card index
     cardIndex.inc();
@@ -80,8 +80,9 @@ function startRound() {
     // Set state
     state.value = "playing";
 
-    // Lock orientation
+    // Lock screen
     orientation.lockOrientation("landscape-primary");
+    wakeLock.request("screen");
 
     // Start interval
     interval.resume();
@@ -99,8 +100,9 @@ function endRound() {
     // Reset state
     state.value = "idle";
 
-    // Reset orientation
+    // Release screen
     orientation.unlockOrientation();
+    wakeLock.release();
 }
 function shuffleCards() {
     randomCards.value = useShuffle(props.cards);
@@ -112,7 +114,7 @@ const commitGuessByMotion = useThrottleFn(
         else if (tilt.value === "downwards")
             commitGuess(false);
     },
-    1000,
+    500,
 );
 
 onMounted(() => {
@@ -131,7 +133,7 @@ onMounted(() => {
         Start
     </UButton>
     <UModal class="grid h-full w-full gap-2 text-3xl" fullscreen :model-value="state === 'playing'" :transition="false">
-        {{ tilt }}
+        <span>{{ tilt }}</span>
         <span>{{ countdown.count }}</span>
         <span> {{ randomCards[cardIndex.count.value] }}</span>
         <UButton class="h-[20vh]" color="green" @click="commitGuess(true)">
