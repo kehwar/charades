@@ -31,6 +31,12 @@ export default betterDefineNuxtConfig(
         nitro: {
             static: true,
         },
+        devServer: {
+            https: {
+                key: "./localhost-key.pem",
+                cert: "./localhost.pem",
+            },
+        },
 
         // i18n: {
         //     locales: [
