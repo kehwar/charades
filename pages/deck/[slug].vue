@@ -7,14 +7,14 @@ const route = useRoute();
 
 const slug = computed(() => (route.params as any).slug as string);
 
-const cards = useFetch<string[]>(joinURL("/decks/en", `${slug.value}.json`), { immediate: false, cache: "force-cache" });
+const cards = useLocalStorage<string[]>(`cards/${slug.value}`, []);
 
 const state = ref<GameState>("idle");
 
 const cardHistory = ref<CardGuess[]>([]);
 
 onMounted(async () => {
-    await cards.refresh();
+    cards.value = await $fetch(joinURL("/decks/en", `${slug.value}.json`));
 });
 </script>
 
@@ -25,7 +25,7 @@ onMounted(async () => {
         </h1>
         <GameRound
             v-model:state="state"
-            :cards="cards.data.value"
+            :cards="cards"
             class="w-full"
             :time="120"
             @round-end="(h) => cardHistory = h"
