@@ -1,5 +1,8 @@
 <template>
-    <UContainer>
-        <NuxtPage />
-    </UContainer>
+    <div>
+        <UContainer>
+            <NuxtPage />
+        </UContainer>
+        <UNotifications />
+    </div>
 </template>
