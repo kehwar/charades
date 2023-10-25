@@ -28,9 +28,13 @@ const cardIndex = useCounter(0);
 const countdown = useCounter(props.time, { min: 0 });
 const interval = useIntervalFn(() => countdown.dec(), 1000, { immediate: false, immediateCallback: false });
 const randomCards = ref<string[]>([]);
+const tilt = useTilt();
+const orientation = useScreenOrientation();
+const { vibrate } = useVibrate({ pattern: [300, 100, 300] });
 
-// Watch countdown & cardIndex
+// Watchers
 
+/** Watch countdown & card index */
 watch([countdown.count, cardIndex.count], () => {
     // If no more time
     if (countdown.count.value <= 0)
@@ -40,6 +44,12 @@ watch([countdown.count, cardIndex.count], () => {
     if (cardIndex.count.value > randomCards.value.length - 1)
         endRound();
 });
+watch(tilt, () => {
+    if (state.value === "playing")
+        commitGuessByMotion();
+});
+
+// Methods
 
 /** Commit guess to history */
 function commitGuess(guess: boolean | null) {
@@ -50,11 +60,13 @@ function commitGuess(guess: boolean | null) {
     // Commit guess
     cardHistory.value.push({ card: randomCards.value[cardIndex.count.value], correct: guess });
 
+    // Feedback
+    if (guess != null)
+        vibrate();
+
     // Increment card index
     cardIndex.inc();
 }
-
-// Methods
 
 function startRound() {
     // Shuffle cards
@@ -67,6 +79,9 @@ function startRound() {
 
     // Set state
     state.value = "playing";
+
+    // Lock orientation
+    orientation.lockOrientation("landscape-primary");
 
     // Start interval
     interval.resume();
@@ -83,10 +98,22 @@ function endRound() {
 
     // Reset state
     state.value = "idle";
+
+    // Reset orientation
+    orientation.unlockOrientation();
 }
 function shuffleCards() {
     randomCards.value = useShuffle(props.cards);
 }
+const commitGuessByMotion = useThrottleFn(
+    () => {
+        if (tilt.value === "upwards")
+            commitGuess(true);
+        else if (tilt.value === "downwards")
+            commitGuess(false);
+    },
+    1000,
+);
 
 onMounted(() => {
     // Set default state
@@ -103,7 +130,8 @@ onMounted(() => {
     >
         Start
     </UButton>
-    <UModal class="grid gap-2 text-3xl" fullscreen :model-value="state === 'playing'" :transition="false">
+    <UModal class="grid h-full w-full gap-2 text-3xl" fullscreen :model-value="state === 'playing'" :transition="false">
+        {{ tilt }}
         <span>{{ countdown.count }}</span>
         <span> {{ randomCards[cardIndex.count.value] }}</span>
         <UButton class="h-[20vh]" color="green" @click="commitGuess(true)">

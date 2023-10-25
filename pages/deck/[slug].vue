@@ -7,7 +7,7 @@ const route = useRoute();
 
 const slug = computed(() => (route.params as any).slug as string);
 
-const cards = useFetch<string[]>(joinURL("/decks/en", `${slug.value}.json`), { immediate: false });
+const cards = useFetch<string[]>(joinURL("/decks/en", `${slug.value}.json`), { immediate: false, cache: "force-cache" });
 
 const state = ref<GameState>("idle");
 
