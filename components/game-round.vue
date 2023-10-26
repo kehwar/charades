@@ -30,6 +30,8 @@ const interval = useIntervalFn(() => countdown.dec(), 1000, { immediate: false, 
 const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
 const showGuessOverlay = ref<null | boolean>(null);
+const startCountdown = useCounter(3, { min: 0 });
+const startInterval = useIntervalFn(() => startCountdown.dec(), 1000, { immediate: false, immediateCallback: false });
 const tilt = useTilt();
 const wakeLock = useWakeLock();
 
@@ -88,6 +90,7 @@ function startRound() {
     shuffleCards();
 
     // Reset counters & history
+    startCountdown.reset();
     cardIndex.reset();
     countdown.reset();
     cardHistory.value = [];
@@ -102,8 +105,15 @@ function startRound() {
     vibrate([100]);
 
     // Start interval
-    interval.resume();
+    startInterval.resume();
 }
+watch(startCountdown.count, () => {
+    if (startInterval.isActive.value && startCountdown.count.value <= 0) {
+        startInterval.pause();
+        interval.resume();
+    }
+});
+
 function endRound() {
     // Pause interval
     interval.pause();
@@ -200,6 +210,20 @@ onMounted(() => {
                     class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
                 >
                     {{ showGuessOverlay === true ? "Correct" : "Pass" }}
+                </span>
+            </template>
+            <!-- Start overlay -->
+            <template v-if="startInterval.isActive.value">
+                <div
+                    class="absolute h-full w-full bg-inherit"
+                />
+                <span
+                    class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-9xl font-bold text-white"
+                >
+                    {{ startCountdown.count }}
+                </span>
+                <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <i class="i-mdi-loading h-56 w-56 animate-spin text-white" />
                 </span>
             </template>
             <!-- Close button -->
