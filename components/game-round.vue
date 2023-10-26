@@ -170,9 +170,10 @@ onMounted(() => {
                 class="absolute left-1/2 top-1/2 grid w-10/12 -translate-x-1/2 -translate-y-1/2 gap-6 px-10 text-center text-6xl font-bold text-white"
             >
                 <span
-                    v-for="(label, index) in cardLabel" :key="index" :class="{
-                        '!text-3xl': index > 0,
-                    }"
+                    v-for="(label, index) in cardLabel"
+                    :key="index"
+                    class="w-full overflow-hidden break-words"
+                    :class="{ '!text-3xl': index > 0 }"
                 >
                     {{ label }}
                 </span>
@@ -215,7 +216,7 @@ onMounted(() => {
             </template>
             <!-- Close button -->
             <UButton
-                class="absolute left-6 top-6 flex h-10 w-10 place-content-center rounded-full border-none bg-black/20 text-white"
+                class="absolute left-4 top-4 flex h-10 w-10 place-content-center rounded-full border-none bg-black/20 text-white"
                 color="gray"
                 icon="i-mdi-close"
                 variant="ghost"
