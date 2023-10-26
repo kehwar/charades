@@ -151,9 +151,10 @@ onMounted(() => {
                 {{ randomCards[cardIndex.count.value] }}
             </span>
             <UButton
-                class="absolute left-6 top-6 flex h-10 w-10 place-content-center rounded-full border-0 bg-gray-400/50"
+                class="absolute left-6 top-6 flex h-10 w-10 place-content-center rounded-full border-none bg-black/20 text-white"
                 color="gray"
                 icon="i-mdi-close"
+                variant="ghost"
                 @click="endRound"
             />
         </div>
