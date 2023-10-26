@@ -137,7 +137,6 @@ onMounted(() => {
     </UButton>
     <UModal fullscreen :model-value="state === 'playing'" :transition="false">
         <div ref="el" class="grid gap-2 text-3xl">
-            <span>{{ tilt }}</span>
             <span>{{ countdown.count }}</span>
             <span> {{ randomCards[cardIndex.count.value] }}</span>
             <UButton class="h-[20vh]" color="green" @click="commitGuess(true)">
