@@ -136,18 +136,26 @@ onMounted(() => {
         Start
     </UButton>
     <UModal fullscreen :model-value="state === 'playing'" :transition="false">
-        <div ref="el" class="grid gap-2 text-3xl">
-            <span>{{ countdown.count }}</span>
-            <span> {{ randomCards[cardIndex.count.value] }}</span>
-            <UButton class="h-[20vh]" color="green" @click="commitGuess(true)">
-                Correct
-            </UButton>
-            <UButton class="h-[20vh]" color="red" @click="commitGuess(false)">
-                Wrong
-            </UButton>
-            <UButton color="gray" @click="endRound">
-                End
-            </UButton>
+        <div
+            ref="el"
+            class="relative h-full w-full bg-blue-600"
+        >
+            <span
+                class="absolute left-1/2 top-6 h-fit -translate-x-1/2 text-2xl font-extrabold text-orange-400"
+            >
+                {{ countdown.count }}'
+            </span>
+            <span
+                class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
+            >
+                {{ randomCards[cardIndex.count.value] }}
+            </span>
+            <UButton
+                class="absolute left-6 top-6 flex h-10 w-10 place-content-center rounded-full border-0 bg-gray-400/50"
+                color="gray"
+                icon="i-mdi-close"
+                @click="endRound"
+            />
         </div>
     </UModal>
 </template>
