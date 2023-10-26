@@ -4,6 +4,7 @@
     "compilerOptions": {
         "noErrorTruncation": true,
         "strict": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "noUncheckedIndexedAccess": true
     }
 }
