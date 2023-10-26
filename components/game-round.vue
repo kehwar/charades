@@ -29,8 +29,7 @@ const fullscreen = useFullscreen(el);
 const interval = useIntervalFn(() => countdown.dec(), 1000, { immediate: false, immediateCallback: false });
 const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
-const showCorrectOverlay = ref(false);
-const showPassOverlay = ref(false);
+const showGuessOverlay = ref<null | boolean>(null);
 const tilt = useTilt();
 const wakeLock = useWakeLock();
 
@@ -75,14 +74,8 @@ function _commitGuess(guess: boolean | null) {
         vibrate(guess ? [100] : [100, 50, 100]);
 
         // Show overlay
-        if (guess === true) {
-            showCorrectOverlay.value = true;
-            setTimeout(() => showCorrectOverlay.value = false, 500);
-        }
-        else if (guess === false) {
-            showPassOverlay.value = true;
-            setTimeout(() => showPassOverlay.value = false, 500);
-        }
+        showGuessOverlay.value = guess;
+        setTimeout(() => showGuessOverlay.value = null, 500);
     }
 
     // Increment card index
@@ -196,22 +189,19 @@ onMounted(() => {
                 variant="ghost"
                 @click="commitGuess(false)"
             />
-            <!-- Correct feedback overlay -->
-            <template v-if="showCorrectOverlay">
-                <div class="absolute h-full w-full bg-cyan-500" />
+            <!-- Guess overlay -->
+            <template v-if="showGuessOverlay != null">
+                <div
+                    class="absolute h-full w-full "
+                    :class="{
+                        'bg-cyan-500': showGuessOverlay === true,
+                        'bg-red-400': showGuessOverlay === false,
+                    }"
+                />
                 <span
                     class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
                 >
-                    Correct
-                </span>
-            </template>
-            <!-- Pass feedback overlay -->
-            <template v-if="showPassOverlay">
-                <div class="absolute h-full w-full bg-red-400" />
-                <span
-                    class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
-                >
-                    Pass
+                    {{ showGuessOverlay === true ? "Correct" : "Pass" }}
                 </span>
             </template>
             <!-- Close button -->
