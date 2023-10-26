@@ -29,6 +29,8 @@ const fullscreen = useFullscreen(el);
 const interval = useIntervalFn(() => countdown.dec(), 1000, { immediate: false, immediateCallback: false });
 const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
+const showCorrectOverlay = ref(false);
+const showPassOverlay = ref(false);
 const tilt = useTilt();
 const wakeLock = useWakeLock();
 
@@ -61,8 +63,20 @@ function commitGuess(guess: boolean | null) {
     cardHistory.value.push({ card: randomCards.value[cardIndex.count.value], correct: guess });
 
     // Feedback
-    if (guess != null)
+    if (guess != null) {
+        // Vibrate
         vibrate(guess ? [100] : [100, 50, 100]);
+
+        // Show overlay
+        if (guess === true) {
+            showCorrectOverlay.value = true;
+            setTimeout(() => showCorrectOverlay.value = false, 500);
+        }
+        else if (guess === false) {
+            showPassOverlay.value = true;
+            setTimeout(() => showPassOverlay.value = false, 500);
+        }
+    }
 
     // Increment card index
     cardIndex.inc();
@@ -140,16 +154,53 @@ onMounted(() => {
             ref="el"
             class="relative h-full w-full bg-blue-600"
         >
+            <!-- Countdown -->
             <span
                 class="absolute left-1/2 top-6 h-fit -translate-x-1/2 text-2xl font-extrabold text-orange-400"
             >
                 {{ countdown.count }}'
             </span>
+            <!-- Card label -->
             <span
                 class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
             >
                 {{ randomCards[cardIndex.count.value] }}
             </span>
+            <!-- Correct button -->
+            <UButton
+                class="absolute left-6 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none bg-black/10 text-white/50 [&_span]:h-10 [&_span]:w-10"
+                color="gray"
+                icon="i-mdi-check"
+                variant="ghost"
+                @click="commitGuess(true)"
+            />
+            <!-- Pass button -->
+            <UButton
+                class="absolute right-6 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none bg-black/10 text-white/50 [&_span]:h-10 [&_span]:w-10"
+                color="gray"
+                icon="i-mdi-arrow-right"
+                variant="ghost"
+                @click="commitGuess(false)"
+            />
+            <!-- Correct feedback overlay -->
+            <template v-if="showCorrectOverlay">
+                <div class="absolute h-full w-full bg-cyan-500" />
+                <span
+                    class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
+                >
+                    Correct
+                </span>
+            </template>
+            <!-- Pass feedback overlay -->
+            <template v-if="showPassOverlay">
+                <div class="absolute h-full w-full bg-red-400" />
+                <span
+                    class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
+                >
+                    Pass
+                </span>
+            </template>
+            <!-- Close button -->
             <UButton
                 class="absolute left-6 top-6 flex h-10 w-10 place-content-center rounded-full border-none bg-black/20 text-white"
                 color="gray"
