@@ -54,7 +54,7 @@ watch(tilt, () => {
 // Methods
 
 /** Commit guess to history */
-function commitGuess(guess: boolean | null) {
+function _commitGuess(guess: boolean | null) {
     // Skip if no more cards
     if (cardIndex.count.value > randomCards.value.length - 1)
         return;
@@ -81,6 +81,7 @@ function commitGuess(guess: boolean | null) {
     // Increment card index
     cardIndex.inc();
 }
+const commitGuess = useThrottleFn(_commitGuess, 500);
 
 function startRound() {
     // Shuffle cards
@@ -124,15 +125,12 @@ function endRound() {
 function shuffleCards() {
     randomCards.value = useShuffle(props.cards);
 }
-const commitGuessByMotion = useThrottleFn(
-    () => {
-        if (tilt.value === "upwards")
-            commitGuess(false);
-        else if (tilt.value === "downwards")
-            commitGuess(true);
-    },
-    500,
-);
+function commitGuessByMotion() {
+    if (tilt.value === "upwards")
+        commitGuess(false);
+    else if (tilt.value === "downwards")
+        commitGuess(true);
+}
 
 onMounted(() => {
     // Set default state
