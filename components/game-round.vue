@@ -113,9 +113,9 @@ function shuffleCards() {
 const commitGuessByMotion = useThrottleFn(
     () => {
         if (tilt.value === "upwards")
-            commitGuess(true);
-        else if (tilt.value === "downwards")
             commitGuess(false);
+        else if (tilt.value === "downwards")
+            commitGuess(true);
     },
     500,
 );
