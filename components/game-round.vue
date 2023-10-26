@@ -34,6 +34,13 @@ const showPassOverlay = ref(false);
 const tilt = useTilt();
 const wakeLock = useWakeLock();
 
+// Computed
+
+const cardLabel = computed(() => {
+    const raw = randomCards.value[cardIndex.count.value];
+    return raw?.split(/ - /gm) ?? [""];
+});
+
 // Watchers
 
 /** Watch countdown & card index */
@@ -60,7 +67,7 @@ function _commitGuess(guess: boolean | null) {
         return;
 
     // Commit guess
-    cardHistory.value.push({ card: randomCards.value[cardIndex.count.value], correct: guess });
+    cardHistory.value.push({ card: randomCards.value[cardIndex.count.value] as any, correct: guess });
 
     // Feedback
     if (guess != null) {
@@ -159,13 +166,20 @@ onMounted(() => {
                 {{ countdown.count }}'
             </span>
             <!-- Card label -->
-            <span
-                class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
+            <div
+                class="absolute left-1/2 top-1/2 grid w-10/12 -translate-x-1/2 -translate-y-1/2 gap-6 px-10 text-center text-6xl font-bold text-white"
             >
-                {{ randomCards[cardIndex.count.value] }}
-            </span>
+                <span
+                    v-for="(label, index) in cardLabel" :key="index" :class="{
+                        '!text-3xl': index > 0,
+                    }"
+                >
+                    {{ label }}
+                </span>
+            </div>
             <!-- Correct button -->
             <UButton
+                v-if="isDevelopment"
                 class="absolute left-6 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none bg-black/10 text-white/50 [&_span]:h-10 [&_span]:w-10"
                 color="gray"
                 icon="i-mdi-check"
@@ -174,6 +188,7 @@ onMounted(() => {
             />
             <!-- Pass button -->
             <UButton
+                v-if="isDevelopment"
                 class="absolute right-6 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none bg-black/10 text-white/50 [&_span]:h-10 [&_span]:w-10"
                 color="gray"
                 icon="i-mdi-arrow-right"
