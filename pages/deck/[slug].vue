@@ -26,7 +26,7 @@ onMounted(async () => {
             v-model:state="state"
             :cards="cards"
             class="w-full"
-            :time="120"
+            :time="isProduction ? 120 : 9999"
             @round-end="(h) => cardHistory = h"
         />
         <UButton v-if="state === 'idle'" to="/">
