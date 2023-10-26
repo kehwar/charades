@@ -1,3 +1,3 @@
-import { isDevelopment, isProduction } from "std-env";
+import { isDevelopment } from "std-env";
 
-export { isDevelopment, isProduction };
+export { isDevelopment };
