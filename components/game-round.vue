@@ -55,7 +55,7 @@ watch([countdown.count, cardIndex.count], () => {
         endRound();
 });
 watch(tilt, () => {
-    if (state.value === "playing")
+    if (state.value === "playing" && interval.isActive.value)
         commitGuessByMotion();
 });
 
@@ -73,7 +73,7 @@ function _commitGuess(guess: boolean | null) {
     // Feedback
     if (guess != null) {
         // Vibrate
-        vibrate(guess ? [100] : [100, 50, 100]);
+        vibrate(guess ? [100] : [200]);
 
         // Show overlay
         showGuessOverlay.value = guess;
