@@ -38,6 +38,9 @@ export default betterDefineNuxtConfig(
                 cert: "./localhost.pem",
             },
         },
+        ui: {
+            icons: ["mdi"],
+        },
 
         // i18n: {
         //     locales: [
