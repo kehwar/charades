@@ -154,7 +154,7 @@ onMounted(() => {
         >
             <!-- Countdown -->
             <span
-                class="absolute left-1/2 top-6 h-fit -translate-x-1/2 text-2xl font-extrabold text-orange-400"
+                class="absolute left-1/2 top-4 h-fit -translate-x-1/2 text-2xl font-extrabold text-orange-400"
             >
                 {{ countdown.count }}'
             </span>
@@ -173,8 +173,7 @@ onMounted(() => {
             </div>
             <!-- Correct button -->
             <UButton
-                v-if="isDevelopment"
-                class="absolute left-6 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none bg-black/10 text-white/50 [&_span]:h-10 [&_span]:w-10"
+                class="absolute left-4 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none !bg-black/10 !text-white/50 [&_span]:h-10 [&_span]:w-10"
                 color="gray"
                 icon="i-mdi-check"
                 variant="ghost"
@@ -182,8 +181,7 @@ onMounted(() => {
             />
             <!-- Pass button -->
             <UButton
-                v-if="isDevelopment"
-                class="absolute right-6 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none bg-black/10 text-white/50 [&_span]:h-10 [&_span]:w-10"
+                class="absolute right-4 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none !bg-black/10 !text-white/50 [&_span]:h-10 [&_span]:w-10"
                 color="gray"
                 icon="i-mdi-arrow-right"
                 variant="ghost"
