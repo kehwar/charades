@@ -34,6 +34,7 @@ const startCountdown = useCounter(3, { min: 0 });
 const startInterval = useIntervalFn(() => startCountdown.dec(), 1000, { immediate: false, immediateCallback: false });
 const tilt = useTilt();
 const wakeLock = useWakeLock();
+const sounds = useSounds();
 
 // Computed
 
@@ -78,6 +79,12 @@ function _commitGuess(guess: boolean | null) {
         // Show overlay
         showGuessOverlay.value = guess;
         setTimeout(() => showGuessOverlay.value = null, 500);
+
+        // Sound
+        if (guess)
+            sounds.rise.play();
+        else
+            sounds.downer.play();
     }
 
     // Increment card index
