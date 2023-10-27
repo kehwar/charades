@@ -5,6 +5,12 @@ import type { LiteralUnion } from "type-fest";
 export const useDeckStore = defineStore("decks", () => {
     const decks = useLocalStorage<Record<string, Deck>>("decks", {});
 
+    function newDeck() {
+        const deck = generateRandomDeck();
+        decks.value[deck.slug] = deck;
+        return deck;
+    }
+
     async function fetchDeck(url: LiteralUnion<DeckPath, string>) {
         const slug = getDeckSlug(url);
         const maybeDeck = await $fetch<Partial<Deck>>(joinURL("/decks", `${url}.json`));
@@ -28,11 +34,23 @@ export const useDeckStore = defineStore("decks", () => {
         decks,
         fetchDeck,
         fetchDecks,
+        newDeck,
     };
 });
 
 function getDeckSlug(url: string) {
     return _.kebabCase(url);
+}
+export function generateRandomDeck(): Deck {
+    return {
+        slug: crypto.randomUUID(),
+        name: "* New Deck *",
+        cards: [
+            "Card 1",
+            "Card 2",
+            "Card 3",
+        ],
+    };
 }
 
 export const DECK_PATHS = [
@@ -56,7 +74,7 @@ export const DECK_PATHS = [
 
 export type DeckPath = typeof DECK_PATHS[number];
 
-type Deck = {
+export type Deck = {
     slug: string
     url?: string
     name: string
