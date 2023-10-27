@@ -11,10 +11,16 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
-        <UContainer>
+    <div class="h-full">
+        <UContainer class="h-full py-4">
             <NuxtPage />
         </UContainer>
         <UNotifications />
     </div>
 </template>
+
+<style>
+html, #__nuxt, body {
+    @apply h-full
+}
+</style>
