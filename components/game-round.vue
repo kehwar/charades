@@ -121,10 +121,12 @@ watch(startCountdown.count, () => {
 
 function endRound() {
     // Pause countdown
+    startCountdown.pause();
     countdown.pause();
 
     // Commit last card to history
-    commitGuess(null);
+    if (startCountdown.count.value === 0)
+        commitGuess(null);
 
     // Emit roundEnd
     emit("roundEnd", cardHistory.value);
