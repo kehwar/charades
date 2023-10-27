@@ -148,97 +148,88 @@ function commitGuessByMotion() {
 }
 
 onMounted(() => {
-    // Set default state
-    state.value = "idle";
+    if (state.value === "playing")
+        startRound();
 });
 </script>
 
 <template>
-    <UButton
-        v-bind="$attrs"
-        class="w-full"
-        :loading="props.cards == null || props.cards.length === 0"
-        @click="startRound()"
+    <div
+        v-if="state === 'playing'"
+        ref="el"
+        class="relative h-full w-full bg-blue-600"
     >
-        Start
-    </UButton>
-    <UModal fullscreen :model-value="state === 'playing'" :transition="false">
-        <div
-            ref="el"
-            class="relative h-full w-full bg-blue-600"
+        <!-- Countdown -->
+        <span
+            class="absolute left-1/2 top-4 h-fit -translate-x-1/2 text-2xl font-extrabold text-orange-400"
         >
-            <!-- Countdown -->
+            {{ countdown.count }}'
+        </span>
+        <!-- Card label -->
+        <div
+            class="absolute left-1/2 top-1/2 grid w-10/12 -translate-x-1/2 -translate-y-1/2 gap-4 px-10 text-center text-6xl font-bold text-white"
+        >
             <span
-                class="absolute left-1/2 top-4 h-fit -translate-x-1/2 text-2xl font-extrabold text-orange-400"
+                v-for="(label, index) in cardLabel"
+                :key="index"
+                class="w-full overflow-hidden break-words pb-1"
+                :class="{ '!text-3xl': index > 0 }"
             >
-                {{ countdown.count }}'
+                {{ label }}
             </span>
-            <!-- Card label -->
-            <div
-                class="absolute left-1/2 top-1/2 grid w-10/12 -translate-x-1/2 -translate-y-1/2 gap-4 px-10 text-center text-6xl font-bold text-white"
-            >
-                <span
-                    v-for="(label, index) in cardLabel"
-                    :key="index"
-                    class="w-full overflow-hidden break-words pb-1"
-                    :class="{ '!text-3xl': index > 0 }"
-                >
-                    {{ label }}
-                </span>
-            </div>
-            <!-- Correct button -->
-            <UButton
-                class="absolute left-4 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none !bg-black/10 !text-white/50 [&_span]:h-10 [&_span]:w-10"
-                color="gray"
-                icon="i-mdi-check"
-                variant="ghost"
-                @click="commitGuess(true)"
-            />
-            <!-- Pass button -->
-            <UButton
-                class="absolute right-4 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none !bg-black/10 !text-white/50 [&_span]:h-10 [&_span]:w-10"
-                color="gray"
-                icon="i-mdi-arrow-right"
-                variant="ghost"
-                @click="commitGuess(false)"
-            />
-            <!-- Guess overlay -->
-            <template v-if="showGuessOverlay != null">
-                <div
-                    class="absolute h-full w-full "
-                    :class="{
-                        'bg-cyan-500': showGuessOverlay === true,
-                        'bg-red-400': showGuessOverlay === false,
-                    }"
-                />
-                <span
-                    class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
-                >
-                    {{ showGuessOverlay === true ? "Correct" : "Pass" }}
-                </span>
-            </template>
-            <!-- Start overlay -->
-            <template v-if="startCountdown.isActive.value">
-                <div
-                    class="absolute h-full w-full bg-inherit"
-                />
-                <span
-                    class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-9xl font-bold text-white"
-                >
-                    {{ startCountdown.count }}
-                </span>
-                <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <i class="i-mdi-loading h-56 w-56 animate-spin text-white" />
-                </span>
-            </template>
-            <!-- Close button -->
-            <UButton
-                class="absolute left-4 top-4 flex h-10 w-10 place-content-center rounded-full border-none bg-black/20 text-white"
-                color="gray"
-                icon="i-mdi-close"
-                variant="ghost"
-                @click="endRound"
-            />
         </div>
-    </UModal>
+        <!-- Correct button -->
+        <UButton
+            class="absolute left-4 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none !bg-black/10 !text-white/50 [&_span]:h-10 [&_span]:w-10"
+            color="gray"
+            icon="i-mdi-check"
+            variant="ghost"
+            @click="commitGuess(true)"
+        />
+        <!-- Pass button -->
+        <UButton
+            class="absolute right-4 top-1/2 flex h-20 w-20 -translate-y-1/2 place-content-center rounded-full border-none !bg-black/10 !text-white/50 [&_span]:h-10 [&_span]:w-10"
+            color="gray"
+            icon="i-mdi-arrow-right"
+            variant="ghost"
+            @click="commitGuess(false)"
+        />
+        <!-- Guess overlay -->
+        <template v-if="showGuessOverlay != null">
+            <div
+                class="absolute h-full w-full "
+                :class="{
+                    'bg-cyan-500': showGuessOverlay === true,
+                    'bg-red-400': showGuessOverlay === false,
+                }"
+            />
+            <span
+                class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-6xl font-bold text-white"
+            >
+                {{ showGuessOverlay === true ? "Correct" : "Pass" }}
+            </span>
+        </template>
+        <!-- Start overlay -->
+        <template v-if="startCountdown.isActive.value">
+            <div
+                class="absolute h-full w-full bg-inherit"
+            />
+            <span
+                class="absolute top-1/2 w-full -translate-y-1/2 px-10 text-center text-9xl font-bold text-white"
+            >
+                {{ startCountdown.count }}
+            </span>
+            <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                <i class="i-mdi-loading h-56 w-56 animate-spin text-white" />
+            </span>
+        </template>
+        <!-- Close button -->
+        <UButton
+            class="absolute left-4 top-4 flex h-10 w-10 place-content-center rounded-full border-none bg-black/20 text-white"
+            color="gray"
+            icon="i-mdi-close"
+            variant="ghost"
+            @click="endRound"
+        />
+    </div>
 </template>

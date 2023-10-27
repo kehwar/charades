@@ -22,7 +22,15 @@ onMounted(async () => {
         <h1 v-if="state === 'idle'">
             Deck: {{ JSON.stringify(slug) }}
         </h1>
+        <UButton
+            class="w-full"
+            :loading="cards.length === 0"
+            @click="state = 'playing'"
+        >
+            Start
+        </UButton>
         <GameRound
+            v-if="state === 'playing'"
             v-model:state="state"
             :cards="cards"
             class="w-full"
