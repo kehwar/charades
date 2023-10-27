@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _, { unset } from "lodash";
 import { joinURL } from "ufo";
 import type { LiteralUnion } from "type-fest";
 
@@ -9,6 +9,9 @@ export const useDeckStore = defineStore("decks", () => {
         const deck = generateRandomDeck();
         decks.value[deck.slug] = deck;
         return deck;
+    }
+    function deleteDeck(slug: string) {
+        unset(decks.value, slug);
     }
 
     async function fetchDeck(url: LiteralUnion<DeckPath, string>) {
@@ -35,6 +38,7 @@ export const useDeckStore = defineStore("decks", () => {
         fetchDeck,
         fetchDecks,
         newDeck,
+        deleteDeck,
     };
 });
 

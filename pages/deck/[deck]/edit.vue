@@ -19,6 +19,11 @@ const parsedCards = computed(() => {
         .value();
 });
 watch(parsedCards, (value) => deck.cards = value);
+
+function deleteDeck() {
+    useDeckStore().deleteDeck(slug);
+    navigateTo({ name: "index" });
+}
 </script>
 
 <template>
@@ -33,6 +38,9 @@ watch(parsedCards, (value) => deck.cards = value);
             <UTextarea v-model="cards" autoresize class="h-min overflow-auto border" :rows="6" variant="none" />
             <UButton :to="{ name: 'deck-deck', params: { deck: slug } }">
                 Return
+            </UButton>
+            <UButton @click="deleteDeck()">
+                Delete
             </UButton>
             <UButton @click="useCopyToClipboard().copy(JSON.stringify(parsedCards, null, 2), { title: 'JSON Copied' })">
                 Copy JSON
