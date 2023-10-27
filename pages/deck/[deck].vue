@@ -4,23 +4,23 @@ import type { CardGuess, GameState } from "~/components/game-round.vue";
 
 const route = useRoute();
 
-const slug = computed(() => (route.params as any).slug as string);
+const deck = computed(() => (route.params as any).deck as string);
 
-const cards = useLocalStorage<string[]>(`cards/${slug.value}`, []);
+const cards = useLocalStorage<string[]>(`cards/${deck.value}`, []);
 
 const state = ref<GameState>("idle");
 
 const cardHistory = ref<CardGuess[]>([]);
 
 onMounted(async () => {
-    cards.value = await $fetch(joinURL("/decks/en", `${slug.value}.json`));
+    cards.value = await $fetch(joinURL("/decks/en", `${deck.value}.json`));
 });
 </script>
 
 <template>
     <div class="grid gap-2 text-3xl">
         <h1 v-if="state === 'idle'">
-            Deck: {{ JSON.stringify(slug) }}
+            Deck: {{ deck }}
         </h1>
         <UButton
             class="w-full"
