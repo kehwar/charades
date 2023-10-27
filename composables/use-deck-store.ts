@@ -17,7 +17,7 @@ export const useDeckStore = defineStore("decks", () => {
         return maybeDeck;
     }
     async function fetchDecks(force?: boolean) {
-        const deckPaths = force ? DECK_PATHS : DECK_PATHS.filter((deckPath) => !decks.value[deckPath]);
+        const deckPaths = force ? DECK_PATHS : DECK_PATHS.filter((deckPath) => !decks.value[useKebabCase(deckPath)]);
         const deckPromises = deckPaths.map((path) => fetchDeck(path));
         await Promise.all(deckPromises);
         return decks.value;
