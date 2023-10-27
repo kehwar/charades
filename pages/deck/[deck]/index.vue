@@ -29,6 +29,12 @@ const cardHistory = ref<CardGuess[]>([]);
             >
                 Start
             </UButton>
+            <UButton
+                size="xl"
+                @click="navigateTo({ name: 'deck-deck-edit', params: { deck: deck.slug } })"
+            >
+                Edit
+            </UButton>
             <UButton v-if="deck.url != null" external :to="`/decks/${deck.url}.json`">
                 See definition
             </UButton>
