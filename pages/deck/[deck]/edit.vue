@@ -39,6 +39,9 @@ function deleteDeck() {
             <UButton :to="{ name: 'deck-deck', params: { deck: slug } }">
                 Return
             </UButton>
+            <UButton @click="cards = parsedCards.join('\n')">
+                Clean
+            </UButton>
             <UButton @click="deleteDeck()">
                 Delete
             </UButton>
