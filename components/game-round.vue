@@ -31,7 +31,7 @@ const fullscreen = useFullscreen(el);
 const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
 const showGuessOverlay = ref<null | boolean>(null);
-const startCountdown = useCountdown(3);
+const startCountdown = useCountdown(3, (count) => count > 0 ? sounds.tick.play() : null);
 const tilt = useTilt();
 const wakeLock = useWakeLock();
 const sounds = useSounds();
