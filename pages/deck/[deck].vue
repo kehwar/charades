@@ -26,11 +26,13 @@ const cardHistory = ref<CardGuess[]>([]);
         </template>
         <div v-if="deck != null" class="grid gap-2">
             <UButton
-                :loading="deck == null"
                 size="xl"
                 @click="state = 'playing'"
             >
                 Start
+            </UButton>
+            <UButton v-if="deck.url != null" external :to="`/decks/${deck.url}.json`">
+                See definition
             </UButton>
             <UButton to="/">
                 Return
