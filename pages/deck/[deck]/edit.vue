@@ -35,7 +35,7 @@ function deleteDeck() {
         </template>
         <div class="flex h-full flex-col gap-2">
             <span>Cards: {{ parsedCards.length }}</span>
-            <UTextarea v-model="cards" autoresize class="h-min overflow-auto border" :rows="6" variant="none" />
+            <UTextarea v-model="cards" class="border" resize :rows="10" variant="none" />
             <UButton :to="{ name: 'deck-deck', params: { deck: slug } }">
                 Return
             </UButton>
@@ -45,7 +45,7 @@ function deleteDeck() {
             <UButton @click="deleteDeck()">
                 Delete
             </UButton>
-            <UButton @click="useCopyToClipboard().copy(JSON.stringify(parsedCards, null, 2), { title: 'JSON Copied' })">
+            <UButton @click="useCopyToClipboard().copy(JSON.stringify({ name: deck.name, cards: deck.cards }, null, 2), { title: 'JSON Copied' })">
                 Copy JSON
             </UButton>
         </div>
