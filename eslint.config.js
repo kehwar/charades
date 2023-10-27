@@ -58,6 +58,7 @@ export default antfu(
             "lodash/chaining": ["error", "always", 2],
             "lodash/import-scope": ["error", "full"],
             "lodash/matches-prop-shorthand": ["error", "never"],
+            "lodash/prefer-invoke-map": "off",
             "lodash/prefer-lodash-method": "off",
             "lodash/prefer-lodash-typecheck": "off",
             "lodash/prop-shorthand": ["error", "never"],
