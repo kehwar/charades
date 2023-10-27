@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { joinURL } from "ufo";
 import type { LiteralUnion } from "type-fest";
 
@@ -5,7 +6,7 @@ export const useDeckStore = defineStore("decks", () => {
     const decks = useLocalStorage<Record<string, Deck>>("decks", {});
 
     async function fetchDeck(url: LiteralUnion<DeckPath, string>) {
-        const slug = useKebabCase(url);
+        const slug = getDeckSlug(url);
         const maybeDeck = await $fetch<Partial<Deck>>(joinURL("/decks", `${url}.json`));
         const deck: Deck = {
             slug,
@@ -17,7 +18,7 @@ export const useDeckStore = defineStore("decks", () => {
         return maybeDeck;
     }
     async function fetchDecks(force?: boolean) {
-        const deckPaths = force ? DECK_PATHS : DECK_PATHS.filter((deckPath) => !decks.value[useKebabCase(deckPath)]);
+        const deckPaths = force ? DECK_PATHS : DECK_PATHS.filter((deckPath) => !decks.value[getDeckSlug(deckPath)]);
         const deckPromises = deckPaths.map((path) => fetchDeck(path));
         await Promise.all(deckPromises);
         return decks.value;
@@ -29,6 +30,10 @@ export const useDeckStore = defineStore("decks", () => {
         fetchDecks,
     };
 });
+
+function getDeckSlug(url: string) {
+    return _.kebabCase(url);
+}
 
 export const DECK_PATHS = [
     // @index('../public/**/*.json', f => `"${f.path.split("/").slice(-2).join("/")}",`)

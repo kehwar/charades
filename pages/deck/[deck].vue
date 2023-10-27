@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { joinURL } from "ufo";
-import { useDeckStore } from "~/composables/use-deck-store";
 import type { CardGuess, GameState } from "~/components/game-round.vue";
 
 const route = useRoute();
