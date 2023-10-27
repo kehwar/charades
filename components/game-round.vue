@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useCountdown } from "~/composables/use-countdown";
+
 export type GameState = "idle" | "playing";
 export type CardGuess = {
     card: string
@@ -23,15 +25,13 @@ const state = useVModel(props, "state", emit);
 const { vibrate } = useVibrate();
 const cardHistory = ref<CardGuess[]>([]);
 const cardIndex = useCounter(0);
-const countdown = useCounter(props.time, { min: 0 });
+const countdown = useCountdown(props.time);
 const el = ref<HTMLElement | null>(null);
 const fullscreen = useFullscreen(el);
-const interval = useIntervalFn(() => countdown.dec(), 1000, { immediate: false, immediateCallback: false });
 const orientation = useScreenOrientation();
 const randomCards = ref<string[]>([]);
 const showGuessOverlay = ref<null | boolean>(null);
-const startCountdown = useCounter(3, { min: 0 });
-const startInterval = useIntervalFn(() => startCountdown.dec(), 1000, { immediate: false, immediateCallback: false });
+const startCountdown = useCountdown(3);
 const tilt = useTilt();
 const wakeLock = useWakeLock();
 const sounds = useSounds();
@@ -56,7 +56,7 @@ watch([countdown.count, cardIndex.count], () => {
         endRound();
 });
 watch(tilt, () => {
-    if (state.value === "playing" && interval.isActive.value)
+    if (state.value === "playing" && countdown.isActive.value)
         commitGuessByMotion();
 });
 
@@ -112,18 +112,18 @@ function startRound() {
     vibrate([100]);
 
     // Start interval
-    startInterval.resume();
+    startCountdown.resume();
 }
 watch(startCountdown.count, () => {
-    if (startInterval.isActive.value && startCountdown.count.value <= 0) {
-        startInterval.pause();
-        interval.resume();
+    if (startCountdown.isActive.value && startCountdown.count.value <= 0) {
+        startCountdown.pause();
+        countdown.resume();
     }
 });
 
 function endRound() {
-    // Pause interval
-    interval.pause();
+    // Pause countdown
+    countdown.pause();
 
     // Commit last card to history
     commitGuess(null);
@@ -220,7 +220,7 @@ onMounted(() => {
                 </span>
             </template>
             <!-- Start overlay -->
-            <template v-if="startInterval.isActive.value">
+            <template v-if="startCountdown.isActive.value">
                 <div
                     class="absolute h-full w-full bg-inherit"
                 />
