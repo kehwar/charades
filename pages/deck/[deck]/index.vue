@@ -2,17 +2,12 @@
 import type { CardGuess, GameState } from "~/components/game-round.vue";
 
 const route = useRoute();
-
-const deckSlug = computed(() => (route.params as any).deck as string);
-
-const deck = computed(() => {
-    const decks = useDeckStore().decks;
-    return decks[deckSlug.value];
-});
-const cards = computed(() => deck.value?.cards ?? []);
-
+const slug = (route.params as any).deck as string;
+const deck = useDeckStore().decks[slug];
+if (deck == null)
+    throw createError("Deck doesn't exist");
+const cards = deck.cards;
 const state = ref<GameState>("idle");
-
 const cardHistory = ref<CardGuess[]>([]);
 </script>
 
@@ -20,9 +15,9 @@ const cardHistory = ref<CardGuess[]>([]);
     <UCard class="h-full overflow-auto">
         <template #header>
             <span class="text-3xl">
-                {{ deck?.name ?? "Loading..." }}</span>
+                {{ deck.name }}</span>
         </template>
-        <div v-if="deck != null" class="grid gap-2">
+        <div class="grid gap-2">
             <UButton
                 size="xl"
                 @click="state = 'playing'"

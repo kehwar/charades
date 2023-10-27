@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import _ from "lodash";
-import type { CardGuess, GameState } from "~/components/game-round.vue";
 
 const route = useRoute();
 const slug = (route.params as any).deck as string;
 const deck = useDeckStore().decks[slug];
 if (deck == null)
     throw createError("Deck doesn't exist");
+
 const cards = ref(deck.cards.join("\n"));
 const parsedCards = computed(() => {
     return _
@@ -19,8 +19,6 @@ const parsedCards = computed(() => {
         .value();
 });
 watch(parsedCards, (value) => deck.cards = value);
-
-useCopyToClipboard();
 </script>
 
 <template>
