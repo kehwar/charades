@@ -11,6 +11,8 @@ function newDeck() {
     const deck = useDeckStore().newDeck();
     navigateTo({ name: "deck-deck-edit", params: { deck: deck.slug } });
 }
+
+const hardReset = useAsyncData(async () => await useDeckStore().hardReset(), { immediate: false });
 </script>
 
 <template>
@@ -26,5 +28,10 @@ function newDeck() {
                 {{ deck.name }}
             </UButton>
         </div>
+        <template #footer>
+            <UButton :loading="hardReset.status.value === 'pending'" @click="hardReset.execute()">
+                Hard Reset
+            </UButton>
+        </template>
     </UCard>
 </template>
