@@ -25,7 +25,7 @@ const state = useVModel(props, "state", emit);
 const { vibrate } = useVibrate();
 const cardHistory = ref<CardGuess[]>([]);
 const cardIndex = useCounter(0);
-const countdown = useCountdown(props.time);
+const countdown = useCountdown(props.time, (count) => count > 0 || count <= 3 ? sounds.tick.play() : null);
 const el = ref<HTMLElement | null>(null);
 const fullscreen = useFullscreen(el);
 const orientation = useScreenOrientation();
