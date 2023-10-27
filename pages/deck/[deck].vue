@@ -1,30 +1,31 @@
 <script setup lang="ts">
 import { joinURL } from "ufo";
+import { useDeckStore } from "~/composables/use-deck-store";
 import type { CardGuess, GameState } from "~/components/game-round.vue";
 
 const route = useRoute();
 
-const deck = computed(() => (route.params as any).deck as string);
+const deckSlug = computed(() => (route.params as any).deck as string);
 
-const cards = useLocalStorage<string[]>(`cards/${deck.value}`, []);
+const deck = computed(() => {
+    const decks = useDeckStore().decks;
+    return decks[deckSlug.value];
+});
+const cards = computed(() => deck.value?.cards ?? []);
 
 const state = ref<GameState>("idle");
 
 const cardHistory = ref<CardGuess[]>([]);
-
-onMounted(async () => {
-    cards.value = await $fetch(joinURL("/decks/en", `${deck.value}.json`));
-});
 </script>
 
 <template>
     <div class="grid gap-2 text-3xl">
         <h1 v-if="state === 'idle'">
-            Deck: {{ deck }}
+            Deck: {{ deck?.name ?? "Loading..." }}
         </h1>
         <UButton
             class="w-full"
-            :loading="cards.length === 0"
+            :loading="deck == null"
             @click="state = 'playing'"
         >
             Start
