@@ -8,6 +8,9 @@ onMounted(() => {
     color.value = "light";
     useDeckStore().fetchDefaultDecks();
 });
+
+// Preload sounds
+useSounds();
 </script>
 
 <template>
