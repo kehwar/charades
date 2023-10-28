@@ -7,10 +7,10 @@ onMounted(() => {
     color.preference = "light";
     color.value = "light";
     useDeckStore().fetchDefaultDecks();
-});
 
-// Preload sounds
-useSounds();
+    // Preload sounds
+    useSounds();
+});
 </script>
 
 <template>
