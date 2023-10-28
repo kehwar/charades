@@ -6,7 +6,7 @@ onMounted(() => {
     color.forced = true;
     color.preference = "light";
     color.value = "light";
-    useDeckStore().fetchDecks();
+    useDeckStore().fetchDefaultDecks();
 });
 </script>
 

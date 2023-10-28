@@ -2,10 +2,16 @@ import _ from "lodash";
 import { joinURL } from "ufo";
 import type { LiteralUnion } from "type-fest";
 
+// Store
+
 export const useDeckStore = defineStore("decks", () => {
+    // State
+
     const decks = useLocalStorage<Record<string, Deck>>("decks", {});
 
-    function newDeck() {
+    // CRUD Actions
+
+    function createNewRandomDeck() {
         const deck = generateRandomDeck();
         decks.value[deck.slug] = deck;
         return deck;
@@ -14,14 +20,12 @@ export const useDeckStore = defineStore("decks", () => {
         _.unset(decks.value, slug);
     }
 
-    async function hardReset() {
-        _.chain(decks.value).keys().forEach((slug) => deleteDeck(slug)).value();
-        await fetchDecks(true);
-    }
+    // Online deck actions
 
-    async function fetchDeck(url: LiteralUnion<DeckPath, string>) {
-        const slug = getDeckSlug(url);
+    /** Fetch deck definition from a URL */
+    async function fetchDeck(url: LiteralUnion<DefaultDeckPath, string>) {
         const maybeDeck = await $fetch<Partial<Deck>>(joinURL("/decks", `${url}.json`));
+        const slug = getDeckSlug(url);
         const deck: Deck = {
             slug,
             url,
@@ -29,28 +33,44 @@ export const useDeckStore = defineStore("decks", () => {
             cards: maybeDeck.cards || [],
         };
         decks.value[slug] = deck;
-        return maybeDeck;
+        return deck;
     }
-    async function fetchDecks(force?: boolean) {
-        const deckPaths = force ? DECK_PATHS : DECK_PATHS.filter((deckPath) => !decks.value[getDeckSlug(deckPath)]);
-        const deckPromises = deckPaths.map((path) => fetchDeck(path));
-        await Promise.all(deckPromises);
+
+    /** Fetch all default decks */
+    async function fetchDefaultDecks(force?: boolean) {
+        const urls = force ? DEFAULT_DECK_PATHS : DEFAULT_DECK_PATHS.filter((deckPath) => !decks.value[getDeckSlug(deckPath)]);
+        if (urls.length > 0)
+            await Promise.all(urls.map((path) => fetchDeck(path)));
         return decks.value;
     }
 
+    // Async Actions
+
+    async function hardReset() {
+        // Delete all decks
+        _.chain(decks.value).keys().forEach((slug) => deleteDeck(slug)).value();
+
+        // Fetch default decks
+        await fetchDefaultDecks(true);
+    }
+
+    // Return
+
     return {
+        // State
         decks,
-        fetchDeck,
-        fetchDecks,
-        newDeck,
+
+        // Actions
+        createNewRandomDeck,
         deleteDeck,
+        fetchDeck,
+        fetchDefaultDecks,
         hardReset,
     };
 });
 
-function getDeckSlug(url: string) {
-    return _.kebabCase(url);
-}
+// Utils
+
 export function generateRandomDeck(): Deck {
     return {
         slug: crypto.randomUUID(),
@@ -62,8 +82,13 @@ export function generateRandomDeck(): Deck {
         ],
     };
 }
+function getDeckSlug(url: string) {
+    return _.kebabCase(url);
+}
 
-export const DECK_PATHS = [
+// Default Decks
+
+export const DEFAULT_DECK_PATHS = [
     // @index('../public/**/*.json', f => `"${f.path.split("/").slice(-2).join("/")}",`)
     "en/animals",
     "en/countries",
@@ -81,8 +106,9 @@ export const DECK_PATHS = [
     "en/star-wars-characters",
     // @endindex
 ] as const;
+export type DefaultDeckPath = typeof DEFAULT_DECK_PATHS[number];
 
-export type DeckPath = typeof DECK_PATHS[number];
+// Type
 
 export type Deck = {
     slug: string

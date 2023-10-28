@@ -8,7 +8,7 @@ const decks = useDeckStore().decks;
 const deckList = computed(() => _.sortBy(decks, (deck) => deck.name));
 
 function newDeck() {
-    const deck = useDeckStore().newDeck();
+    const deck = useDeckStore().createNewRandomDeck();
     navigateTo({ name: "deck-deck-edit", params: { deck: deck.slug } });
 }
 function requestHardReset() {
