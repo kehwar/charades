@@ -69,6 +69,40 @@ export const useDeckStore = defineStore("decks", () => {
     };
 });
 
+// Shorthand Actions
+export function useHardReset() {
+    const { execute, isLoading } = useAsyncState(
+        async () => await useDeckStore().hardReset(),
+        null,
+        { immediate: false },
+    );
+    function confirm() {
+        useToast().add({
+            id: "hard-reset",
+            title: "Confirm Hard Reset",
+            description: "This will delete all custom decks and restore the default decks.",
+            actions: [
+                {
+                    label: "Confirm",
+                    click: () => execute(),
+                },
+                {
+                    label: "Cancel",
+                    click: () => useToast().remove("hard-reset"),
+                },
+            ],
+        });
+    }
+    return {
+        isLoading,
+        confirm,
+    };
+}
+export function navigateToNewDeck() {
+    const deck = useDeckStore().createNewRandomDeck();
+    navigateTo({ name: "deck-deck-edit", params: { deck: deck.slug } });
+}
+
 // Utils
 
 export function generateRandomDeck(): Deck {
