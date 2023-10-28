@@ -11,7 +11,23 @@ function newDeck() {
     const deck = useDeckStore().newDeck();
     navigateTo({ name: "deck-deck-edit", params: { deck: deck.slug } });
 }
-
+function requestHardReset() {
+    useToast().add({
+        id: "hard-reset",
+        title: "Confirm Hard Reset",
+        description: "This will delete all custom decks and restore the default decks.",
+        actions: [
+            {
+                label: "Confirm",
+                click: () => hardReset.execute(),
+            },
+            {
+                label: "Cancel",
+                click: () => useToast().remove("hard-reset"),
+            },
+        ],
+    });
+}
 const hardReset = useAsyncData(async () => await useDeckStore().hardReset(), { immediate: false });
 </script>
 
@@ -29,7 +45,7 @@ const hardReset = useAsyncData(async () => await useDeckStore().hardReset(), { i
             </UButton>
         </div>
         <template #footer>
-            <UButton :loading="hardReset.status.value === 'pending'" @click="hardReset.execute()">
+            <UButton :loading="hardReset.status.value === 'pending'" @click="requestHardReset()">
                 Hard Reset
             </UButton>
         </template>
