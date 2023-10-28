@@ -9,9 +9,6 @@ const hardReset = useHardReset();
 
 <template>
     <UCard class="h-full overflow-auto">
-        <template #header>
-            <span class="text-3xl">Decks</span>
-        </template>
         <div class="flex flex-wrap gap-2 overflow-auto">
             <UButton v-for="(deck, index) in deckList" :key="index" class="grow" icon="i-heroicons-book-open" size="xl" :to="joinURL('deck', deck.slug)">
                 {{ deck.name }}

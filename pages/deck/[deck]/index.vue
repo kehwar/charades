@@ -14,7 +14,7 @@ const cardHistory = ref<CardGuess[]>([]);
 <template>
     <UCard class="h-full overflow-auto">
         <template #header>
-            <span class="text-3xl">
+            <span class="text-xl font-semibold">
                 {{ deck.name }}</span>
         </template>
         <UButton
@@ -22,12 +22,9 @@ const cardHistory = ref<CardGuess[]>([]);
             size="xl"
             @click="state = 'playing'"
         >
-            {{ cardHistory.length === 0 ? 'Start' : 'Restart' }}
+            {{ cardHistory.length === 0 ? 'Start' : 'Start again' }}
         </UButton>
         <UCard v-if="state === 'idle' && cardHistory.length > 0" class="mt-4">
-            <template #header>
-                <span>Results</span>
-            </template>
             <ul class="flex flex-wrap gap-2">
                 <li
                     v-for="(card, index) in cardHistory"
@@ -52,24 +49,27 @@ const cardHistory = ref<CardGuess[]>([]);
             @round-end="(h) => cardHistory = h"
         />
         <template #footer>
-            <div class="flex justify-between gap-2">
-                <div class="flex gap-2">
+            <div class="flex justify-between gap-2 overflow-auto">
+                <div class="flex flex-wrap gap-2">
                     <UButton
+                        class="w-[6rem]"
                         icon="i-heroicons-play-circle"
                         @click="state = 'playing'"
                     >
                         Start
                     </UButton>
                     <UButton
+                        class="w-[6rem]"
                         icon="i-heroicons-pencil-square"
                         @click="navigateTo({ name: 'deck-deck-edit', params: { deck: deck.slug } })"
                     >
                         Edit
                     </UButton>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap justify-end gap-2">
                     <UButton
                         v-if="deck.url != null"
+                        class="w-[6rem]"
                         external
                         icon="i-heroicons-code-bracket"
                         :to="`/decks/${deck.url}.json`"
@@ -77,6 +77,7 @@ const cardHistory = ref<CardGuess[]>([]);
                         Source
                     </UButton>
                     <UButton
+                        class="w-[6rem]"
                         icon="i-heroicons-home"
                         to="/"
                     >
