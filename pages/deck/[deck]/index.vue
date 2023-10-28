@@ -6,9 +6,10 @@ const slug = (route.params as any).deck as string;
 const deck = useDeckStore().decks[slug];
 if (deck == null)
     throw createError("Deck doesn't exist");
+
 const cards = deck.cards;
-const state = ref<GameState>("idle");
 const cardHistory = ref<CardGuess[]>([]);
+const state = ref<GameState>("idle");
 </script>
 
 <template>
@@ -17,13 +18,24 @@ const cardHistory = ref<CardGuess[]>([]);
             <span class="text-xl font-semibold">
                 {{ deck.name }}</span>
         </template>
-        <UButton
-            icon="i-heroicons-play-circle"
-            size="xl"
-            @click="state = 'playing'"
-        >
-            {{ cardHistory.length === 0 ? 'Start' : 'Start again' }}
-        </UButton>
+        <div class="flex flex-wrap gap-2">
+            <UButton
+                class="w-[10rem]"
+                icon="i-heroicons-play-circle"
+                size="xl"
+                @click="state = 'playing'"
+            >
+                {{ cardHistory.length === 0 ? 'Start' : 'Start again' }}
+            </UButton>
+            <UButton
+                class="w-[10rem]"
+                icon="i-heroicons-home"
+                size="xl"
+                to="/"
+            >
+                Return
+            </UButton>
+        </div>
         <UCard v-if="state === 'idle' && cardHistory.length > 0" class="mt-4">
             <ul class="flex flex-wrap gap-2">
                 <li
@@ -65,8 +77,22 @@ const cardHistory = ref<CardGuess[]>([]);
                     >
                         Edit
                     </UButton>
+                    <UButton
+                        class="w-[6rem]"
+                        icon="i-heroicons-trash"
+                        @click="useDeleteDeck(slug).confirm"
+                    >
+                        Delete
+                    </UButton>
                 </div>
                 <div class="flex flex-wrap justify-end gap-2">
+                    <UButton
+                        class="w-[6rem]"
+                        icon="i-heroicons-code-bracket"
+                        @click="useCopyJSONToClipboard(slug)"
+                    >
+                        JSON
+                    </UButton>
                     <UButton
                         v-if="deck.url != null"
                         class="w-[6rem]"

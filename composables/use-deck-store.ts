@@ -19,6 +19,9 @@ export const useDeckStore = defineStore("decks", () => {
     function deleteDeck(slug: string) {
         _.unset(decks.value, slug);
     }
+    function readDeck(slug: string) {
+        return decks.value[slug];
+    }
 
     // Online deck actions
 
@@ -66,6 +69,7 @@ export const useDeckStore = defineStore("decks", () => {
         fetchDeck,
         fetchDefaultDecks,
         hardReset,
+        readDeck,
     };
 });
 
@@ -80,6 +84,8 @@ export function useHardReset() {
         useToast().add({
             id: "hard-reset",
             title: "Confirm Hard Reset",
+            icon: "i-heroicons-exclamation-triangle",
+            color: "amber",
             description: "This will delete all custom decks and restore the default decks.",
             actions: [
                 {
@@ -98,9 +104,43 @@ export function useHardReset() {
         confirm,
     };
 }
+export function useDeleteDeck(slug: string) {
+    const toastId = `delete-deck-${slug}`;
+    function confirm() {
+        useToast().add({
+            id: toastId,
+            title: `Confirm delete deck`,
+            description: `Delete deck '${useDeckStore().readDeck(slug)?.name}' and all its cards.`,
+            icon: "i-heroicons-trash",
+            color: "amber",
+            actions: [
+                {
+                    label: "Confirm",
+                    click: () => {
+                        useDeckStore().deleteDeck(slug);
+                        navigateTo({ name: "index" });
+                    },
+                },
+                {
+                    label: "Cancel",
+                    click: () => useToast().remove(toastId),
+                },
+            ],
+        });
+    }
+    return {
+        confirm,
+    };
+}
 export function navigateToNewDeck() {
     const deck = useDeckStore().createNewRandomDeck();
     navigateTo({ name: "deck-deck-edit", params: { deck: deck.slug } });
+}
+export function useCopyJSONToClipboard(slug: string) {
+    const deck = useDeckStore().readDeck(slug);
+    const json = JSON.stringify({ name: deck?.name, cards: deck?.cards }, null, 2);
+    useClipboard().copy(json);
+    useToast().add({ title: "JSON copied to clipboard", timeout: 1500, icon: "i-heroicons-clipboard" });
 }
 
 // Utils
