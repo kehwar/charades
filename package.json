@@ -9,7 +9,8 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "lint": "eslint .",
-        "check": "vue-tsc"
+        "check": "vue-tsc",
+        "ngrok": "ngrok start dev"
     },
     "dependencies": {
         "@iconify/json": "^2.2.132",
